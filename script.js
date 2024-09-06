@@ -1,62 +1,96 @@
 const cards = document.querySelector(".cards");
 const reset = document.getElementById("restart");
 
-const memorycards = ["A","B","C"];
+const memorycards = ["A","B","C","A","B","C"];
 
 // duplicate array elements and count
-const total_cards = [...memorycards, ...memorycards];
-//console.log(total_cards);
-
+const total_cards = [...memorycards];
 const cardlength = total_cards.length;
-//console.log(cardlength);
 
 let firstCard, secondCard;
-let cardFlipped = false; 
+let lockBoard = false;
+let count = 0;
 
-let revealCount = 0;
-let activeBox = null;
-
-
-
-//Creating card 
-function createcard(card){
-    const div = document.createElement("div");
-    div.classList.add("card");
-    div.setAttribute("data-name",card);
-    div.setAttribute("data-opened", "false");
-
-
-    div.addEventListener("click", ()=>{
-        div.innerHTML = `${card}`;
-        div.setAttribute("class","flipped");
-        //div.classList.add("flipped");
-
-
-    });
-
-    reset.addEventListener("click",resetcards);
-
-    return div;
+function createCard(card) {
+    
+    for (let i = card.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [card[i], card[j]] = [card[j], card[i]];
+    }
+    return card;
 }
 
-function resetcards(){
-   console.log("hello");
-   
+function gameBorad(){
+    createCard(memorycards).forEach(card => {
+        
+        const divelement = document.createElement("div");
+        divelement.classList.add("card");
+        
+        //divelement.setAttribute("data-name",card);
+        divelement.dataset.name = card;       
+        divelement.innerText = `${card}`;
+
+        //divelement.setAttribute("data-revealed","false");
+
+        divelement.addEventListener('click', flipCard);
+
+        cards.append(divelement);
+
+    })
 }
 
+function flipCard() {
+    if (lockBoard) return;
+    if (this === firstCard) return;
 
+    this.classList.add('flipped');
+    
+    if (!firstCard) {
+        firstCard = this;
+        return;
+    }
 
-//careating card in webpage
-for(let i = 0; i < cardlength; i++){
-    const randomIndex = Math.floor(Math.random() * total_cards.length);
-    const card = total_cards[randomIndex];
-    const box = createcard(card);
-    total_cards.splice(randomIndex,1);
-    cards.append(box);
-
-    /* const card = total_cards[i];
-    const box = createcard(card);
-    cards.append(box); */
+    secondCard = this;
+    checkMatch();
+}
+        
+function checkMatch() {
+    let isMatch = firstCard.dataset.name === secondCard.dataset.name;
+    if (isMatch) {
+        disableCards();
+        count = count + 1;
+   } 
+    else {
+        unflipCards();
+    }
 }
 
+function disableCards() {
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    resetBoard();
+}
 
+function unflipCards() {
+    lockBoard = true;
+    setTimeout(() => {
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
+        resetBoard();
+    }, 1000);
+}
+
+const resetBoard = () => {
+    [firstCard, secondCard] = [null, null];
+    lockBoard = false;
+}
+
+document.getElementById("restart").addEventListener('click', () => restartGame());
+
+const restartGame = () => {
+    count = 0;
+    resetBoard();
+    gameBorad();
+}         
+
+gameBorad();

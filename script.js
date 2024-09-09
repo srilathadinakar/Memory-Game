@@ -1,51 +1,53 @@
-const cards = document.querySelector(".cards");
-const reset = document.getElementById("restart");
+const board = document.querySelector(".Memory-Game"); 
+const restart = document.getElementById("restart");
+const message = document.getElementById("message");
 
-const memorycards = ["A","B","C","A","B","C"];
+const memorycards = ["A","B","C","D","E","F","G","H"];
 
 // duplicate array elements and count
-const total_cards = [...memorycards];
-const cardlength = total_cards.length;
+const total_cards = [...memorycards,...memorycards,];
+//console.log(total_cards);
 
-let firstCard, secondCard;
-let lockBoard = false;
+const cardlength = total_cards.length;
+//console.log(cardlength);
+
+let firstCard; 
+let secondCard;
 let count = 0;
 
-function createCard(card) {
-    
-    for (let i = card.length - 1; i > 0; i--) {
+CreateCard();
+
+function shuffleArray(arr){
+    for (let i = 0; i < cardlength; i++) {
         const j = Math.floor(Math.random() * (i + 1));
-        [card[i], card[j]] = [card[j], card[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]]; 
     }
-    return card;
+    return arr;
 }
 
-function gameBorad(){
-    createCard(memorycards).forEach(card => {
-        
-        const divelement = document.createElement("div");
-        divelement.classList.add("card");
-        
-        //divelement.setAttribute("data-name",card);
-        divelement.dataset.name = card;       
-        divelement.innerText = `${card}`;
+function CreateCard(){
+    board.innerHTML = "";
+    shuffleArray(total_cards).forEach(element => {       
+        const CardElement = document.createElement("div");
+        CardElement.classList.add("card");
 
-        //divelement.setAttribute("data-revealed","false");
+        CardElement.setAttribute("data-name",element);
+        CardElement.innerHTML = `${element}`;
 
-        divelement.addEventListener('click', flipCard);
+        CardElement.addEventListener("click",flipCard);
 
-        cards.append(divelement);
-
-    })
+        board.append(CardElement); 
+    });         
 }
 
-function flipCard() {
-    if (lockBoard) return;
-    if (this === firstCard) return;
+function flipCard(){   
+    if(this === firstCard){           
+        return;
+    }
 
-    this.classList.add('flipped');
-    
-    if (!firstCard) {
+    this.classList.add("flipped");
+
+    if(!firstCard){
         firstCard = this;
         return;
     }
@@ -53,44 +55,39 @@ function flipCard() {
     secondCard = this;
     checkMatch();
 }
+
+function checkMatch(){
+    const cardMatch = firstCard.getAttribute("data-name") === secondCard.getAttribute("data-name");
         
-function checkMatch() {
-    let isMatch = firstCard.dataset.name === secondCard.dataset.name;
-    if (isMatch) {
-        disableCards();
+    if(cardMatch){
+        firstCard.classList.add("flipped");
+        secondCard.classList.add("flipped");
+
+        resetBoard();
+
         count = count + 1;
-   } 
-    else {
-        unflipCards();
+        if(count === cardlength / 2){
+            message.innerHTML = "Congratulations! You found all pairs.. Restart to Play again";
+        }
+    }
+    else{
+        setTimeout(()=>{
+            firstCard.classList.remove("flipped");
+            secondCard.classList.remove("flipped");
+
+            resetBoard();
+        },1000);
     }
 }
 
-function disableCards() {
-    firstCard.classList.add('matched');
-    secondCard.classList.add('matched');
-    resetBoard();
+function resetBoard(){
+    firstCard = null;
+    secondCard = null;
 }
 
-function unflipCards() {
-    lockBoard = true;
-    setTimeout(() => {
-        firstCard.classList.remove('flipped');
-        secondCard.classList.remove('flipped');
-        resetBoard();
-    }, 1000);
-}
-
-const resetBoard = () => {
-    [firstCard, secondCard] = [null, null];
-    lockBoard = false;
-}
-
-document.getElementById("restart").addEventListener('click', () => restartGame());
-
-const restartGame = () => {
+restart.addEventListener("click", ()=>{
     count = 0;
     resetBoard();
-    gameBorad();
-}         
-
-gameBorad();
+    CreateCard();   
+    message.innerHTML = " ";
+});

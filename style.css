@@ -1,12 +1,7 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-}
-
 body{
-    background-color: lightcoral;
+    background-color: black;
+    color: white;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 .container{
     max-width: 1024px;
@@ -17,38 +12,36 @@ header{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    /*background-color: rgb(113, 108, 173);*/
-    padding:20px 0;   
+    text-align: center;  
 }
 h1{
-   color: white; 
    text-transform: uppercase;   
 }
 button{
     margin: 20px 0 10px 0;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid black;
     border-radius: 12px;
     text-transform: capitalize;
     font-weight: bold;
+    cursor: pointer;
+    color: white;
+    font-size: medium;
+    background: rgb(187,121,231);
+    background: linear-gradient(90deg, rgba(187,121,231,1) 0%, rgba(252,90,90,1) 100%);
 }
-.memory-game{
-    margin: 0 auto;
-    /* background-color: lightgreen; */
-}
-.cards{
-    /* width: 200px; */
-    margin:45px auto;
-    width: max-content;
-    display: grid;
-    grid-template-columns: repeat(4,100px);
+.Memory-Game{
+    width: 500px;
+    margin:45px auto; 
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 20px;
     box-sizing: border-box; 
 }
 .card{
     width: 100px;
-    height: 130px;
+    height: 100px;
     border: 3px solid blueviolet;
     border-radius: 12%;
     cursor: pointer;
@@ -59,12 +52,32 @@ button{
     color: transparent;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center;    
 }
-.flipped, .matched{
-    background-color: blanchedalmond;
-    background-image: none;
-    color: blueviolet;   
+.flipped{
+    background-image: linear-gradient(to top, blueviolet , rgb(113, 182, 238));
+    color: white;  
     transition: all 0.5s ease-in;
     transform: rotateY(360deg);
+}
+#message{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    font-size:large;
+    width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 12px;
+    color: blueviolet;
+    background-color: white;
+    line-height: 30px;
+}
+
+@media (max-width: 480px) {
+    .Memory-Game{
+        width: auto;
+    }
 }
